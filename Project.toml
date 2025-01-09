@@ -1,0 +1,13 @@
+name = "Thermochem"
+uuid = "2bf68f77-8830-43e0-9a61-af3789da6e0a"
+authors = ["Jonas Weitzel"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
