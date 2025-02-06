@@ -1,6 +1,3 @@
-path = "C:/Users/jonas/OneDrive/Desktop/Programming/Julia/Chemical_Engineering/Packages/Data/Fuller_Params.csv"
-fuller_df = DataFrame(CSV.File(path));
-
 function calc_D12(T, p, comp1, comp2; fuller_df=fuller_df)
     """Calculates the binary diffusion coefficient from the Fuller equation.
 
@@ -11,7 +8,7 @@ function calc_D12(T, p, comp1, comp2; fuller_df=fuller_df)
         comp2 (str): Formula of component 2
 
     Returns:
-        D12 (float): Binary diffusion coefficient.
+        D12 (float): Binary diffusion coefficient [m2 / s].
     """
 
     comp1_dat = fuller_df[findfirst(==(comp1), fuller_df.Component), :]
