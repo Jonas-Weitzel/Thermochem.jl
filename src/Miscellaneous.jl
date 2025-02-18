@@ -43,7 +43,7 @@ function get_thermo_coeffs(comp_vec; gen_dat=gen_dat, Cp_dat=Cp_dat)
     return Cpcoef_ik_mat, dHf0i_vec
 end
 
-function calc_PFR_thermodat(Cpcoef_ik_mat, dHf0i_vec, Tz_vec)
+function calc_mix_thermodat!(Cpi_vec, dHfi_vec, Cpcoef_ik_mat, dHf0i_vec, T)
     """Calculates the molar heat capacity and heat of formation for the species i along the reactor coordinate z of a PFR.
 
     Args:
@@ -58,11 +58,15 @@ function calc_PFR_thermodat(Cpcoef_ik_mat, dHf0i_vec, Tz_vec)
         dHfiz_mat (array): Molar enthalpy of formation [J / mol]
     """
 
-    Nz = length(Tz_vec)
-    tz_vec = Tz_vec/1000
+    t = T/1000
+    t2 = t^2; t3 = t^3; t4 = t^4
+    Ni = length(dHf0i_vec)
 
-    Cpiz_mat = Cpcoef_ik_mat[1:end, 1:5] * (@. [ones(Nz) tz_vec tz_vec^2 tz_vec^3 tz_vec^(-2)])'         
-    dHfiz_mat = dHf0i_vec .+ Cpcoef_ik_mat * (@. [tz_vec (tz_vec^2 / 2) (tz_vec^3 / 3) (tz_vec^4 / 4) -tz_vec ones(Nz) zeros(Nz) -ones(Nz)])'
+    for i in 1:Ni
+        A,B,C,D,E,F,G,H = Cpcoef_ik_mat[i,:]
+        Cpi_vec[i] = A + B*t + C*t2 + D*t3 + E/t2       
+        dHfi_vec[i] = dHf0i_vec[i] + A*t + B*t2/2 + C*t3/3 + C*t4/4 - E/t + F - H
+    end
 
-    return Cpiz_mat, dHfiz_mat
+    return nothing
 end
