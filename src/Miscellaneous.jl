@@ -43,7 +43,7 @@ function get_thermo_coeffs(comp_vec; gen_dat=gen_dat, Cp_dat=Cp_dat)
     return Cpcoef_ik_mat, dHf0i_vec
 end
 
-function calc_PFR_thermodat!(Cpz_vec, dHrz_vec, Cpcoef_ik_mat, Tz_vec)
+function calc_PFR_thermodat(Cpcoef_ik_mat, dHf0i_vec, Tz_vec)
     """Calculates the molar heat capacity and heat of formation for the species i along the reactor coordinate z of a PFR.
 
     Args:
@@ -58,17 +58,11 @@ function calc_PFR_thermodat!(Cpz_vec, dHrz_vec, Cpcoef_ik_mat, Tz_vec)
         dHfiz_mat (array): Molar enthalpy of formation [J / mol]
     """
 
-    Nz = length(Tz_vec); Ni = length(dHf0i_vec)
-    for z in 1:Nz
-        t = Tz_vec[z]/1000
-        Cpz = 0.
-        for i in 1:Ni
-            A,B,C,D,E,F,G,H = Cpcoef_ik_mat[i]
-            Cpz += A + B*t + C*t^2 + D*t^3 + E/(t^2)
-            # Cpiz_mat = Cpcoef_ik_mat[1:end, 1:5] * (@. [ones(Nz) tz_vec tz_vec^2 tz_vec^3 tz_vec^(-2)])'         
-            # dHfiz_mat = dHf0i_vec .+ Cpcoef_ik_mat * (@. [tz_vec (tz_vec^2 / 2) (tz_vec^3 / 3) (tz_vec^4 / 4) -tz_vec ones(Nz) zeros(Nz) -ones(Nz)])'
-        end
-        Cpz_vec[z] = Cpz
-    end
-    return nothing
+    Nz = length(Tz_vec)
+    tz_vec = Tz_vec/1000
+
+    Cpiz_mat = Cpcoef_ik_mat[1:end, 1:5] * (@. [ones(Nz) tz_vec tz_vec^2 tz_vec^3 tz_vec^(-2)])'         
+    dHfiz_mat = dHf0i_vec .+ Cpcoef_ik_mat * (@. [tz_vec (tz_vec^2 / 2) (tz_vec^3 / 3) (tz_vec^4 / 4) -tz_vec ones(Nz) zeros(Nz) -ones(Nz)])'
+
+    return Cpiz_mat, dHfiz_mat
 end
