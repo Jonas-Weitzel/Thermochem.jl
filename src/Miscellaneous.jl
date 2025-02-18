@@ -43,7 +43,7 @@ function get_thermo_coeffs(comp_vec; gen_dat=gen_dat, Cp_dat=Cp_dat)
     return Cpcoef_ik_mat, dHf0i_vec
 end
 
-function calc_PFR_thermodat(Cpiz_mat, dHfiz_mat, Cpcoef_ik_mat, dHf0i_vec, Tz_vec)
+function calc_PFR_thermodat!(Cpiz_mat, dHfiz_mat, Cpcoef_ik_mat, dHf0i_vec, Tz_vec)
     """Calculates the molar heat capacity and heat of formation for the species i along the reactor coordinate z of a PFR.
 
     Args:
